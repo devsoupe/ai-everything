@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# Environment Variables
+.env
+
+# bkit Local State
+.bkit/state/memory.json
