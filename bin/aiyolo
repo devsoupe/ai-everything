@@ -1,0 +1,58 @@
+#!/usr/bin/env zsh
+
+# AIYOLO - Multi-Agent AI CLI Router
+
+function show_help() {
+  echo -e "\033[1mAIYOLO\033[0m - Multi-Agent AI CLI Router"
+  echo ""
+  echo -e "\033[1mUSAGE\033[0m"
+  echo -e "  aiyolo [options] [arguments...]"
+  echo ""
+  echo -e "\033[1mOPTIONS\033[0m"
+  echo -e "  \033[1;36m-c, --claude\033[0m    Execute Claude via claude-code-router (default)"
+  echo -e "  \033[1;36m-g, --gemini\033[0m    Execute Google Gemini CLI"
+  echo -e "  \033[1;36m-h, --help\033[0m      Display this help and exit"
+  echo ""
+  echo -e "\033[1mEXAMPLES\033[0m"
+  echo -e "  aiyolo -c                    \033[90m# Start Claude interactive session\033[0m"
+  echo -e "  aiyolo -g /code-review       \033[90m# Start Gemini with /code-review command\033[0m"
+}
+
+if [[ -z "$1" || "$1" == "--help" || "$1" == "-h" ]]; then
+  show_help
+  exit 0
+fi
+
+# Clear screen as requested in original function
+clear
+
+# Try to activate ccr if available
+if command -v ccr >/dev/null 2>&1; then
+  eval "$(ccr activate 2>/dev/null)"
+fi
+
+case "$1" in
+  -g|--gemini)
+    shift
+    if ! command -v gemini >/dev/null 2>&1; then
+      echo "Error: gemini command not found."
+      exit 1
+    fi
+    NODE_NO_WARNINGS=1 gemini "$@"
+    ;;
+  -c|--claude)
+    shift
+    if ! command -v ccr >/dev/null 2>&1; then
+      echo "Error: ccr command not found."
+      exit 1
+    fi
+    NODE_NO_WARNINGS=1 ccr code "$@"
+    ;;
+  *)
+    if ! command -v ccr >/dev/null 2>&1; then
+      echo "Error: ccr command not found."
+      exit 1
+    fi
+    NODE_NO_WARNINGS=1 ccr code "$@"
+    ;;
+esac
